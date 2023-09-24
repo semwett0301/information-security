@@ -1,9 +1,15 @@
 from math import ceil
 from random import randint
 
-count_matrix_size = lambda alphadeb: ceil(len(alphadeb) ** 0.5)
+
+# Расчет размера квадрата Полибия
+def count_matrix_size(alphabed):
+    size = ceil(len(alphabed) ** 0.5)
+    assert size == len(alphabed) ** 0.5, "Некорректный алфавит"
+    return size
 
 
+# Получение изначальной матрицы
 def get_default_matrix(matrix_size):
     matrix = [''] * matrix_size
     for i in range(matrix_size):
@@ -11,6 +17,7 @@ def get_default_matrix(matrix_size):
     return matrix
 
 
+# Создание квадрата полибия по заданному алфавиту
 def configure_matrix(alphabed):
     # Ищем размер итогового квадрата
     matrix_size = count_matrix_size(alphabed)
@@ -32,6 +39,7 @@ def configure_matrix(alphabed):
     return matrix
 
 
+# Конвертирование квадрата Полибия в строку
 def convert_matrix_to_string(matrix):
     result = ""
 
@@ -39,6 +47,6 @@ def convert_matrix_to_string(matrix):
         for j in range(len(list(matrix[i]))):
             result += matrix[i][j]
         if len(matrix) - 1 != i:
-            result += "\n"
+            result += "|"
 
     return result

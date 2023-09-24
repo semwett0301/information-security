@@ -1,14 +1,12 @@
 import os
 from enum import Enum
 
+from tabulate import tabulate
 from termcolor import colored
 
+import io
 from utils import alphabeds as a
 from utils import utils as u
-
-from tabulate import tabulate
-
-import io
 
 
 class Mode(Enum):
@@ -21,28 +19,38 @@ def print_error(error):
 
 
 def input_from_file():
-    filename = str(input("Введите название файла, где хранится исходный текст (в директории test): "))
+    while True:
+        try:
+            filename = str(input("Введите название файла, где хранится исходный текст (в директории test): "))
 
-    file = io.open(os.path.abspath(os.curdir) + '\\1.1-oz-lab\\test\\' + filename, mode='r', encoding="utf-8")
+            file = io.open(os.path.abspath(os.curdir) + '\\1.1-oz-lab\\test\\' + filename, mode='r', encoding="utf-8")
 
-    return file.read()
+            return file.read()
+        except FileNotFoundError:
+            print_error("Файл не найден")
 
 
 def input_matrix_from_file(alphabed):
-    filename = str(input("Введите название файла, где хранится матрица (в директории src): "))
+    while True:
+        try:
+            filename = str(input("Введите название файла, где хранится матрица (в директории src): "))
 
-    matrix_rows = io.open(os.path.abspath(os.curdir) + '\\1.1-oz-lab\\src\\' + filename, mode='r',
-                          encoding="utf-8").read().split('\n')
-    matrix_size = u.count_matrix_size(alphabed)
+            matrix_rows = io.open(os.path.abspath(os.curdir) + '\\1.1-oz-lab\\src\\' + filename, mode='r',
+                                  encoding="utf-8").read().split('|')
+            matrix_size = u.count_matrix_size(alphabed)
 
-    assert len(matrix_rows) == matrix_size, "Матрица некорректна"
+            assert len(matrix_rows) == matrix_size or len(matrix_rows) == matrix_size + 1, "Матрица некорректна"
 
-    result = u.get_default_matrix(matrix_size)
+            result = u.get_default_matrix(matrix_size)
 
-    for i in range(matrix_size):
-        result[i] = list(matrix_rows[i])
+            for i in range(matrix_size):
+                assert len(matrix_rows[i]) == matrix_size or len(matrix_rows[i]) == 1, "Матрица некорректна"
 
-    return result
+                result[i] = list(matrix_rows[i])
+
+            return result
+        except FileNotFoundError:
+            print_error("Файл не найден")
 
 
 def input_alphabed():
@@ -107,18 +115,28 @@ def print_matrix(matrix):
 
 
 def output_result(result):
-    filename = str(input("Введите название файла, где где будет результат (в директории res): "))
+    while True:
+        try:
+            filename = str(input("Введите название файла, где где будет результат (в директории res): "))
 
-    file = io.open(os.path.abspath(os.curdir) + '\\1.1-oz-lab\\res\\' + filename, mode='w',
-                   encoding="utf-8")
-    file.write(result)
-    file.close()
+            file = io.open(os.path.abspath(os.curdir) + '\\1.1-oz-lab\\res\\' + filename, mode='w',
+                           encoding="utf-8")
+            file.write(result)
+            file.close()
+            return
+        except FileNotFoundError:
+            print_error("Файл не найден")
 
 
 def output_matrix(matrix):
-    filename = str(input("Введите название файла, где где будет квадрат Полибия (в директории res): "))
+    while True:
+        try:
+            filename = str(input("Введите название файла, где где будет квадрат Полибия (в директории res): "))
 
-    file = io.open(os.path.abspath(os.curdir) + '\\1.1-oz-lab\\res\\' + filename, mode='w',
-                   encoding="utf-8")
-    file.write(matrix)
-    file.close()
+            file = io.open(os.path.abspath(os.curdir) + '\\1.1-oz-lab\\res\\' + filename, mode='w',
+                           encoding="utf-8")
+            file.write(matrix)
+            file.close()
+            return
+        except FileNotFoundError:
+            print_error("Файл не найден")

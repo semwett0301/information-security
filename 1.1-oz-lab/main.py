@@ -13,49 +13,94 @@ if mode == Mode.CR:
 else:
     matrix = input_matrix_from_file(alphabed)
 
-
-def crypto_func(i, j):
-    if i == len(matrix) - 1:
-        return matrix[0][j] if matrix[0][j] != "" else crypto_func(0, j)
-    else:
-        return matrix[i + 1][j] if matrix[i + 1][j] != "" else crypto_func(i + 1, j)
-
-
-def decrypto_func(i, j):
-    if i == 0:
-        return matrix[-1][j] if matrix[-1][j] != "" else decrypto_func(-1, j)
-    else:
-        return matrix[i - 1][j] if matrix[i - 1][j] != "" else decrypto_func(i - 1, j)
-
-
-def find_idx_in_matrix(char, comp_fun):
+# Поиск координат символа в квадрате Полибия
+def find_idx_in_matrix(char):
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
             if matrix[i][j] == char:
-                return comp_fun(i, j)
+                return [i, j]
 
-    return char
+    print(char)
+    raise ValueError("Некорректная матрица (не содержит весь алфавит)")
 
+# Циклический сдвиг строки
+def cyclic_shift(value, mode="STRAIGHT"):
+    value = list(value)
 
+    if mode != "REVERSE":
+        value = value[::-1]
+
+    last_char = value.pop()
+    value.append(last_char)
+
+    return value if mode == "REVERSE" else value[::-1]
+
+# Получение индексов в квадрате Полибия в виде x и y координат
+def get_indexes_from_matrix(value):
+    x_idxs = []
+    y_idxs = []
+
+    for char in value:
+        i, j = find_idx_in_matrix(char)
+        x_idxs.append(i)
+        y_idxs.append(j)
+
+    return x_idxs, y_idxs
+
+# Получение индексов в квадрате Полибия по строке
+def get_indexes_by_str(value):
+    x_idxs, y_idxs = get_indexes_from_matrix(value)
+
+    result = ""
+
+    for char in x_idxs:
+        result += str(char)
+
+    for char in y_idxs:
+        result += str(char)
+
+    return list(result)
+
+# Получение строки по индексам в квадрате Полибия
+def get_str_by_indexes(indexes):
+    result = ""
+
+    for i in range(len(indexes) // 2):
+        result += matrix[int(indexes[i * 2])][int(indexes[i * 2 + 1])]
+
+    return result
+
+# Получение индексов из зашифрованной строки
+def get_res_indx(value):
+    source_indexes = ""
+
+    x_indx, y_indx = get_indexes_from_matrix(value)
+    for i in range(len(value)):
+        source_indexes += str(x_indx[i]) + str(y_indx[i])
+
+    source_indexes = cyclic_shift(source_indexes, "REVERSE")
+    x_res_indx = source_indexes[0:len(source_indexes) // 2]
+    y_res_indx = source_indexes[len(source_indexes) // 2:]
+
+    return x_res_indx, y_res_indx
+
+# Функция шифрования
 def crypto(source):
-    result = ""
+    source_indexes = get_indexes_by_str(source)
+    source_indexes = cyclic_shift(source_indexes)
+    return get_str_by_indexes(source_indexes)
 
-    for char in source:
-        result += find_idx_in_matrix(char, crypto_func)
-
-    return result
-
-
+# Функция дешифрования
 def decrypto(source):
-    result = ""
+    x_res_indx, y_res_indx = get_res_indx(source)
 
-    for char in source:
-        result += find_idx_in_matrix(char, decrypto_func)
+    result_indx = ""
 
-    return result
+    for i in range(len(x_res_indx)):
+        result_indx += str(x_res_indx[i]) + str(y_res_indx[i])
 
+    return get_str_by_indexes(result_indx)
 
-result = ""
 
 if mode == Mode.CR:
     string_for_crypto = input_from_file()
