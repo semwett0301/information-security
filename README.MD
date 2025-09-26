@@ -1,6 +1,6 @@
 # Information security labs
 
-## Lab 1.1
+## [Lab 1.1](1.1-oz-lab)
 
 Implementation of encryption using the polybian square method
 
@@ -12,5 +12,9 @@ Implementation of encryption using the polybian square method
 ## [Lab 2.2](2.2-oz-lab)
 
 Implementation of RSA hacking by the re-encryption method
+
+## [Lab 2.1](2.1-oz-lab)
+
+Implementation of RSA hacking by the Fermat method
 
 All code located in the **_main.py_** file
